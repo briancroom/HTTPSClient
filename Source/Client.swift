@@ -85,13 +85,17 @@ extension Client {
         var request = request
         addHeaders(&request)
 
+        print("** Responding to \(request)")
         let connection = try self.connection ?? TCPSSLConnection(host: host, port: port, verifyBundle: verifyBundle, certificate: certificate, privateKey: privateKey , certificateChain: certificateChain, SNIHostname: host)
+        print("** Opening!")
         try connection.open()
-
+        print("** Done opening")
         try serializer.serialize(request, to: connection)
 
         while true {
+            print("** Receiving")
             let data = try connection.receive(upTo: 1024)
+            print("** Parsing")
             if let response = try parser.parse(data)  {
 
                 if let didUpgrade = request.didUpgrade {
